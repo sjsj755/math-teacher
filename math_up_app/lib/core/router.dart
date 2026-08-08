@@ -29,7 +29,7 @@ class AppRouter {
   Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.onboarding:
-        return _page(const OnboardingPage());
+        return _page(OnboardingPage(dbInitController: _dbInitController));
       case AppRoutes.diagnosis:
         return _page(const DiagnosisPage());
       case AppRoutes.report:
