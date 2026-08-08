@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+import '../features/diagnosis/diagnosis_page.dart';
+import '../features/errorbook/errorbook_page.dart';
+import '../features/home/home_page.dart';
+import '../features/onboarding/onboarding_page.dart';
+import '../features/practice/practice_page.dart';
+import '../features/report/report_page.dart';
+import '../features/settings/settings_page.dart';
+
+/// 路由常量（阶段 1 全部为占位页）。
+abstract final class AppRoutes {
+  static const String home = '/';
+  static const String onboarding = '/onboarding';
+  static const String diagnosis = '/diagnosis';
+  static const String report = '/report';
+  static const String practice = '/practice';
+  static const String errorbook = '/errorbook';
+  static const String settings = '/settings';
+}
+
+/// 路由表。
+abstract final class AppRouter {
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case AppRoutes.onboarding:
+        return _page(const OnboardingPage());
+      case AppRoutes.diagnosis:
+        return _page(const DiagnosisPage());
+      case AppRoutes.report:
+        return _page(const ReportPage());
+      case AppRoutes.practice:
+        return _page(const PracticePage());
+      case AppRoutes.errorbook:
+        return _page(const ErrorbookPage());
+      case AppRoutes.settings:
+        return _page(const SettingsPage());
+      case AppRoutes.home:
+      default:
+        return _page(const HomePage());
+    }
+  }
+
+  static MaterialPageRoute<dynamic> _page(Widget page) {
+    return MaterialPageRoute<dynamic>(builder: (_) => page);
+  }
+}
