@@ -4,6 +4,12 @@ __pycache__/
 
 # Local build artifacts
 *.log
+*.log.err
 
 # Office 临时锁文件
 ~$*
+
+# notify_server
+notify_server/.venv/
+notify_server/*.sqlite3
+.pytest_cache/

@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../db/database.dart';
 import '../infrastructure/question_importer.dart';
+import 'digest_service.dart';
 
 /// 数据库初始化状态。
 enum DbInitState { initializing, success, failure }
@@ -28,6 +29,12 @@ class DbInitController extends ChangeNotifier {
       _db = db;
       result = await QuestionImporter(db).importFromAssets();
       state = DbInitState.success;
+      // 启动后台生成当日摘要并补传离线队列；失败不影响初始化状态。
+      try {
+        await DigestService(db: db).generateTodayAndSync();
+      } catch (_) {
+        // 网络不可用或服务未配置：保留本地队列，下次重试
+      }
     } catch (e) {
       error = e.toString();
       state = DbInitState.failure;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../core/application/db_initializer.dart';
+import '../../core/application/digest_service.dart';
 import '../../core/application/practice_service.dart';
 import '../../core/domain/models/practice.dart';
 import '../../core/domain/models/question.dart';
@@ -195,6 +196,7 @@ class _PracticePageState extends State<PracticePage> {
   void _next() {
     _timer?.cancel();
     if (_index == _session!.questions.length - 1) {
+      unawaited(_refreshDigest());
       _showCompletion();
     } else {
       setState(() {
@@ -202,6 +204,17 @@ class _PracticePageState extends State<PracticePage> {
         _feedback = null;
       });
       _startQuestionTimer();
+    }
+  }
+
+  /// 练习完成后刷新当日日报摘要并尝试上送（失败静默，下次重试）。
+  Future<void> _refreshDigest() async {
+    try {
+      await DigestService(
+        db: widget.dbInitController.database!,
+      ).generateTodayAndSync();
+    } catch (_) {
+      // 离线或服务未配置：摘要保留在本地队列
     }
   }
 

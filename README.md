@@ -9,15 +9,17 @@
 ├─ 高中数学教学能力体系分析报告.docx   # 能力模型与产品设计依据
 ├─ build_dev_doc.py / build_report.py # 两个文档的生成脚本（python-docx）
 ├─ math_up_app/                       # Flutter 学生端
+├─ notify_server/                     # FastAPI 通知服务（绑定/摘要/QQ 推送）
 ├─ scripts/validate_content.py        # 章节树/题库一致性校验（发布前基线）
 └─ CHANGELOG.md                       # 版本变更记录
 ```
 
 ## 快速开始
 
-1. 阅读《数学学习提升 App 开发文档》第九部分（开发步骤），当前进行到阶段 3 前。
+1. 阅读《数学学习提升 App 开发文档》第九部分（开发步骤），阶段 0–5 已完成，当前进行到阶段 6（联调部署）前。
 2. App 开发与测试命令见 `math_up_app/README.md`。
-3. 每次发布前：更新 CHANGELOG → `python scripts\validate_content.py` → `flutter test`。
+3. 通知服务开发与测试命令见 `notify_server/README.md`。
+4. 每次发布前：更新 CHANGELOG → `python scripts\validate_content.py` → `flutter test` → `pytest notify_server`。
 
 ## 文档更新方式
 
@@ -28,4 +30,4 @@ python build_report.py
 python build_dev_doc.py
 ```
 
-需要 `python-docx` 环境（本机已配置）。
+需要 `python-docx` 环境。

@@ -7,7 +7,9 @@
 - 阶段 0/1（环境与工程骨架）✅
 - 阶段 2（数据层与题库：章节树、77 题题库、SQLite 六表、导入管线）✅
 - 视觉改版 v0.3.0（清新学习风·克制可爱版）✅
-- 阶段 3（诊断与报告）待开发
+- 阶段 3（诊断与报告：15 题诊断、四因子评分、雷达图）✅
+- 阶段 4（练习与错题闭环：推荐/重做/周清、状态机）✅
+- 阶段 5（通知服务：日报摘要生成与离线上送、设置页 QQ 绑定）✅ 已实现，待真机验收
 
 ## 技术栈
 
@@ -19,10 +21,10 @@ Flutter 3.44.9 / Dart 3.12.2；sqflite（本地 SQLite）、flutter_math_fork（
 lib/
 ├─ main.dart / app.dart        # 入口与路由/主题
 ├─ core/
-│  ├─ db/                      # database.dart + migrations/（001_init.sql）
-│  ├─ domain/                  # Question 实体、仓储接口
-│  ├─ infrastructure/          # 仓储实现、题库导入、app_config
-│  ├─ application/             # 初始化用例（DbInitController）
+│  ├─ db/                      # database.dart + migrations/（001/002）
+│  ├─ domain/                  # Question/Diagnosis/Practice/Digest 实体、仓储接口
+│  ├─ infrastructure/          # 仓储实现、题库导入、app_config、HttpSyncService
+│  ├─ application/             # 初始化/诊断/练习/摘要用例（DbInitController 等）
 │  ├─ ui/                      # 设计系统组件（AppCard/按钮/徽章/GeoSpirit 等）
 │  └─ theme.dart               # 设计令牌与主题
 └─ features/                   # home/onboarding/diagnosis/report/practice/errorbook/settings
@@ -35,7 +37,7 @@ assets/data/                   # content_index.json / chapters.json / questions.
 
 - `ANDROID_HOME=D:\Android`（Android SDK）
 - `PUB_CACHE=D:\pub-cache`（纯 ASCII 路径，规避中文用户名导致的原生库编译问题）
-- `flutter test` 在 Windows 上需要 sqlite3.dll 可用（例如把 Python 的 `DLLs` 目录加入 PATH）
+- `flutter test` 在 Windows 上需要 sqlite3.dll 可加载（阶段五已加入用户 PATH：`C:\Users\陈乔源\sqlite3`）
 
 常用命令：
 

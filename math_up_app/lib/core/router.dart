@@ -45,7 +45,7 @@ class AppRouter {
       case AppRoutes.errorbook:
         return _page(ErrorbookPage(dbInitController: _dbInitController));
       case AppRoutes.settings:
-        return _page(const SettingsPage());
+        return _page(SettingsPage(dbInitController: _dbInitController));
       case AppRoutes.home:
       default:
         return _page(HomePage(dbInitController: _dbInitController));
