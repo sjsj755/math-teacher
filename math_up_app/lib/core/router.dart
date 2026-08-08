@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'application/db_initializer.dart';
+import 'domain/models/practice.dart';
 import '../features/diagnosis/diagnosis_page.dart';
 import '../features/errorbook/errorbook_page.dart';
 import '../features/home/home_page.dart';
@@ -35,9 +36,14 @@ class AppRouter {
       case AppRoutes.report:
         return _page(ReportPage(dbInitController: _dbInitController));
       case AppRoutes.practice:
-        return _page(const PracticePage());
+        return _page(
+          PracticePage(
+            dbInitController: _dbInitController,
+            mode: PracticeMode.recommend,
+          ),
+        );
       case AppRoutes.errorbook:
-        return _page(const ErrorbookPage());
+        return _page(ErrorbookPage(dbInitController: _dbInitController));
       case AppRoutes.settings:
         return _page(const SettingsPage());
       case AppRoutes.home:

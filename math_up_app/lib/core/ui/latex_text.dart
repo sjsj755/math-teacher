@@ -3,11 +3,20 @@ import 'package:flutter_math_fork/flutter_math.dart';
 
 /// 行内公式文本：按 `$...$` 拆分，公式用 Math.tex 行内渲染，解析失败回退纯文本。
 class LatexText extends StatelessWidget {
-  const LatexText(this.text, {super.key, this.style, this.textAlign});
+  const LatexText(
+    this.text, {
+    super.key,
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+  });
 
   final String text;
   final TextStyle? style;
   final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   static final RegExp _latexPattern = RegExp(r'\$([^$]+)\$');
 
@@ -19,6 +28,8 @@ class LatexText extends StatelessWidget {
       TextSpan(children: spans),
       style: baseStyle,
       textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
     );
   }
 

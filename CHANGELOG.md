@@ -1,5 +1,18 @@
 # 更新日志
 
+## v0.5.0（2026-08-08）
+
+### 新增
+- 阶段 4 练习与错题闭环：推荐练习（薄弱点前 3＋难度 6/3/1，10 题）→ 逐题限时与即时解析 → 答错自动入错题本 → 错题重做（升级类用同类题）→ 观察期 7 天 → 周清复测（已掌握/升级）。
+- PracticeRecommender、ErrorBookMachine（表 10 状态机）、ErrorBookRepository、PracticeService（recommend/redo/weekly 三模式）。
+- 共享作答组件 QuestionAnswerPanel 与 AnswerGrading 判分（诊断/练习复用）。
+
+### 修复
+- 无。
+
+### 内容变更
+- 无（纯功能，不涉及题库）。
+
 ## v0.4.0（2026-08-08）
 
 ### 新增

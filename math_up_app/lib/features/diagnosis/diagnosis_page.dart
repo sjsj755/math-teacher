@@ -17,6 +17,7 @@ import '../../core/ui/app_chip.dart';
 import '../../core/ui/app_progress.dart';
 import '../../core/ui/geo_spirit.dart';
 import '../../core/ui/latex_text.dart';
+import '../../core/ui/question_answer_panel.dart';
 import '../report/report_page.dart';
 
 /// 诊断页：15 题顺序作答（含填空与限时题），提交后弹完成层再进报告。
@@ -40,7 +41,6 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
   final Map<String, String> _fillText = {};
   final Map<String, bool> _timedOut = {};
   final Map<String, int> _seconds = {};
-  final Map<String, TextEditingController> _fillControllers = {};
 
   Timer? _timer;
   int _remaining = 0;
@@ -55,9 +55,6 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    for (final controller in _fillControllers.values) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
@@ -437,55 +434,21 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
 
   List<Widget> _answerArea(DiagnosisQuestion item) {
     final question = item.question;
-    switch (question.type) {
-      case QuestionType.choice:
-      case QuestionType.selfS:
-      case QuestionType.selfP:
-        return [
-          for (var i = 0; i < question.options.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _OptionCard(
-                label: String.fromCharCode(65 + i),
-                text: question.options[i],
-                selected: question.type == QuestionType.choice
-                    ? _choice[question.id] == String.fromCharCode(65 + i)
-                    : _selfOption[question.id] == i,
-                onTap: () => setState(() {
-                  if (question.type == QuestionType.choice) {
-                    _choice[question.id] = String.fromCharCode(65 + i);
-                  } else {
-                    _selfOption[question.id] = i;
-                  }
-                }),
-              ),
-            ),
-        ];
-      case QuestionType.fill:
-        final controller = _fillControllers.putIfAbsent(question.id, () {
-          final textController = TextEditingController(
-            text: _fillText[question.id] ?? '',
-          );
-          textController.addListener(() {
-            _fillText[question.id] = textController.text;
-          });
-          return textController;
-        });
-        return [
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.text,
-            style: Theme.of(context).textTheme.bodyLarge,
-            decoration: const InputDecoration(
-              hintText: '请输入你的答案',
-              prefixIcon: Icon(Icons.edit_rounded),
-            ),
-            onSubmitted: (_) => _goNext(),
-          ),
-        ];
-      case QuestionType.essay:
-        return const [];
-    }
+    return [
+      QuestionAnswerPanel(
+        key: ValueKey(question.id),
+        question: question,
+        initialOption: _choice[question.id],
+        initialSelfOption: _selfOption[question.id],
+        initialFillText: _fillText[question.id],
+        onOptionChanged: (letter) =>
+            setState(() => _choice[question.id] = letter),
+        onSelfOptionChanged: (index) =>
+            setState(() => _selfOption[question.id] = index),
+        onFillChanged: (text) => setState(() => _fillText[question.id] = text),
+        onFillSubmitted: (_) => _goNext(),
+      ),
+    ];
   }
 
   String _groupLabel(DiagnosisGroup group) {
@@ -504,61 +467,6 @@ class _DiagnosisPageState extends State<DiagnosisPage> {
       DiagnosisGroup.s => Icons.rule_rounded,
       DiagnosisGroup.p => Icons.timer_rounded,
     };
-  }
-}
-
-class _OptionCard extends StatelessWidget {
-  const _OptionCard({
-    required this.label,
-    required this.text,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final String text;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return AppCard(
-      onTap: onTap,
-      borderColor: selected ? AppColors.primary : null,
-      color: selected ? AppColors.primaryContainer : AppColors.surface,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 13,
-            backgroundColor: selected
-                ? AppColors.primary
-                : AppColors.background,
-            child: Text(
-              label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontSize: 13,
-                color: selected ? Colors.white : AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: LatexText(text, style: theme.textTheme.bodyLarge)),
-          if (selected)
-            const Padding(
-              padding: EdgeInsets.only(left: 6, top: 2),
-              child: Icon(
-                Icons.check_circle_rounded,
-                size: 18,
-                color: AppColors.primary,
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 
