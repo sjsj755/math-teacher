@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../core/application/db_initializer.dart';
 import '../../core/router.dart';
 
-/// 首页：阶段 1 提供 6 个占位页入口。
+/// 首页：展示题库初始化状态与 6 个功能入口。
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.dbInitController});
+
+  final DbInitController dbInitController;
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +22,105 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('数学学习提升')),
-      body: ListView.separated(
-        itemCount: entries.length,
-        separatorBuilder: (_, _) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final entry = entries[index];
-          return ListTile(
-            leading: const Icon(Icons.chevron_right),
-            title: Text(entry.title),
-            subtitle: Text(entry.subtitle),
-            onTap: () => Navigator.pushNamed(context, entry.route),
+      body: ListenableBuilder(
+        listenable: dbInitController,
+        builder: (context, _) {
+          return ListView(
+            children: [
+              _StatusCard(controller: dbInitController),
+              const Divider(height: 1),
+              for (final entry in entries)
+                ListTile(
+                  leading: const Icon(Icons.chevron_right),
+                  title: Text(entry.title),
+                  subtitle: Text(entry.subtitle),
+                  onTap: () => Navigator.pushNamed(context, entry.route),
+                ),
+            ],
           );
         },
       ),
+    );
+  }
+}
+
+/// 题库初始化状态卡片（初始化中 / 成功 / 失败可重试）。
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({required this.controller});
+
+  final DbInitController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Widget content;
+    switch (controller.state) {
+      case DbInitState.initializing:
+        content = const Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 12),
+            Expanded(child: Text('正在初始化本地题库…')),
+          ],
+        );
+      case DbInitState.success:
+        final result = controller.result!;
+        content = Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green.shade600),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('题库导入成功', style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 2),
+                  Text(
+                    '题目 ${result.questionCount} · 章节 ${result.chapterCount}'
+                    ' · 内容版本 ${result.contentVersion}'
+                    ' · 数据版本 ${result.schemaVersion}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      case DbInitState.failure:
+        content = Row(
+          children: [
+            Icon(Icons.error_outline, color: theme.colorScheme.error),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('题库初始化失败', style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 2),
+                  Text(
+                    controller.error ?? '未知错误',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 6),
+                  FilledButton.tonal(
+                    onPressed: controller.run,
+                    child: const Text('重试'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+    }
+    return Card(
+      margin: const EdgeInsets.all(12),
+      child: Padding(padding: const EdgeInsets.all(16), child: content),
     );
   }
 }

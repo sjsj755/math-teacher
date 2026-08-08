@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'application/db_initializer.dart';
 import '../features/diagnosis/diagnosis_page.dart';
 import '../features/errorbook/errorbook_page.dart';
 import '../features/home/home_page.dart';
@@ -19,9 +20,13 @@ abstract final class AppRoutes {
   static const String settings = '/settings';
 }
 
-/// 路由表。
-abstract final class AppRouter {
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+/// 路由表（携带数据层初始化控制器）。
+class AppRouter {
+  AppRouter(this._dbInitController);
+
+  final DbInitController _dbInitController;
+
+  Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.onboarding:
         return _page(const OnboardingPage());
@@ -37,11 +42,11 @@ abstract final class AppRouter {
         return _page(const SettingsPage());
       case AppRoutes.home:
       default:
-        return _page(const HomePage());
+        return _page(HomePage(dbInitController: _dbInitController));
     }
   }
 
-  static MaterialPageRoute<dynamic> _page(Widget page) {
+  MaterialPageRoute<dynamic> _page(Widget page) {
     return MaterialPageRoute<dynamic>(builder: (_) => page);
   }
 }

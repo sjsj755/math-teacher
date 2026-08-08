@@ -176,7 +176,8 @@ def build():
     )
     add_para(
         doc,
-        "修订记录：V1.3（2026-08-08）标记阶段 0、阶段 1 已完成，记录实际环境与构建配置，新增项目进度总览；"
+        "修订记录：V1.4（2026-08-08）标记阶段 2 已完成，记录数据层与题库实现细节；"
+        "V1.3（2026-08-08）标记阶段 0、阶段 1 已完成，记录实际环境与构建配置，新增项目进度总览；"
         "V1.2（2026-08-07）架构升级为 DDD 有界上下文＋模块化单体，新增学习/内容/通知三域划分；"
         "V1.1（2026-08-07）新增“八、架构演进与持续更新”章节，接口统一升级为 /api/v1/，明确内容双轨、数据迁移、发布流程与测试基线。",
     )
@@ -204,14 +205,15 @@ def build():
     add_callout(
         doc,
         "当前进度",
-        "阶段 0（环境准备）✅ 已完成；阶段 1（工程骨架）✅ 已完成；阶段 2–6 待开发。下一阶段：阶段 2 数据层与题库。",
+        "阶段 0（环境准备）✅ 已完成；阶段 1（工程骨架）✅ 已完成；阶段 2（数据层与题库）✅ 已完成；阶段 3–6 待开发。下一阶段：阶段 3 诊断报告。",
     )
     add_bullets(
         doc,
         [
             "✅ 已完成：Flutter 3.44.9（D:\\flutter）、Android SDK（D:\\Android，API 36）、iQOO Z5x 真机连接、QQ 官方机器人注册；",
             "✅ 已完成：math_up_app 工程骨架（依赖、中文主题、路由、6 个占位页），调试 APK 构建并真机运行验收通过；",
-            "○ 待办：内网穿透注册（cpolar/花生壳）；阶段 2 数据层与题库 → 阶段 3 诊断报告 → 阶段 4 练习错题 → 阶段 5 通知服务 → 阶段 6 联调部署。",
+            "✅ 已完成：阶段 2 数据层与题库（章节树 18 章、题库 77 题、SQLite 六表与迁移、题库导入管线），内容校验与 flutter test 全部通过；",
+            "○ 待办：内网穿透注册（cpolar/花生壳）；阶段 3 诊断报告 → 阶段 4 练习错题 → 阶段 5 通知服务 → 阶段 6 联调部署。",
         ],
     )
 
@@ -802,7 +804,7 @@ def build():
         [
             ["阶段0 环境准备", "Flutter/Python 环境、QQ 开放平台机器人", "flutter doctor 通过；机器人创建成功", "✅ 已完成", "0.5–1 天"],
             ["阶段1 工程骨架", "Flutter 工程、目录、路由、主题", "App 可启动并跳转所有页面", "✅ 已完成", "1 天"],
-            ["阶段2 数据层", "章节树/题库 JSON、SQLite 建表", "题库导入成功，表可读写", "○ 待开发", "1 天"],
+            ["阶段2 数据层", "章节树/题库 JSON、SQLite 建表", "题库导入成功，表可读写", "✅ 已完成", "1 天"],
             ["阶段3 诊断报告", "诊断页、评分引擎、报告页", "完成一次诊断并看到雷达图", "○ 待开发", "1–2 天"],
             ["阶段4 练习错题", "练习页、计时、错题状态机", "答错自动入错题本并可重做", "○ 待开发", "2 天"],
             ["阶段5 通知服务", "FastAPI、绑定、摘要、QQ 推送", "家长 QQ 收到测试日报", "○ 待开发", "2 天"],
@@ -856,6 +858,22 @@ def build():
             "Android 网络配置：Gradle 腾讯镜像、Maven 阿里云/腾讯镜像、Flutter Maven 中国镜像（storage.flutter-io.cn/download.flutter.io）；",
             "特殊处理：中文路径检查覆盖（android.overridePathCheck=true）、NDK r28c 手动安装（28.2.13676358）、CMake 3.22.1 自动安装；",
             "调试版 APK 约 150MB（含 3 种 ABI）；发布版 arm64 单架构预计 30–40MB。",
+        ],
+    )
+    add_para(
+        doc,
+        "阶段 2 状态：✅ 已完成（2026-08-08，内容校验与自动化测试通过；真机覆盖安装需连接 iQOO Z5x 后补做验收）。实际记录：",
+    )
+    add_bullets(
+        doc,
+        [
+            "章节树 chapters.json：五册 18 章（A1-1…B3-8），必修第一册细化到 24 节（人教 A 版 2020 目录），书节点带年级标记（高一/高二/高三）；",
+            "题库 questions.json：内容题 73 道（必修第一册每节 3–5 题）＋诊断自评模板 4 道（DIAG-S×2、DIAG-P×2）；难度分布 基础 63% / 中档 27% / 压轴 10%，每章至少 1 道难度 4–5 题；字段含 type/difficulty/thinking_method/lose_type 等，公式用 $...$ LaTeX 片段；",
+            "SQLite 数据层：migrations/001_init.sql 建六表（question/diagnosis/answer_record/error_book/app_config/digest_queue）＋索引与 CHECK 约束；migrate.dart 用 PRAGMA user_version 按序迁移；database.dart 打开 math_up.db 并写入默认配置（schema_version=1、push_time=21:30、daily_enabled=true）；",
+            "领域与基础设施：Question 实体、QuestionRepository 接口与 SQLite 实现、QuestionImporter（按 content_version 幂等导入，仅覆盖 question 表）、DbInitController；",
+            "首页新增题库初始化状态卡片（初始化中/成功/失败可重试）；",
+            "scripts/validate_content.py 内容一致性校验通过；flutter test 6 项全部通过（迁移、导入、幂等、脏数据回滚、仓储查询、六表读写）；dart analyze 无问题；",
+            "说明：sqflite_common_ffi 仅作 dev 依赖用于宿主测试，通过 pubspec hooks user_defines 让 sqlite3 使用系统库，避免构建时从 GitHub 下载预编译产物。",
         ],
     )
     add_h2(doc, "9.3　阶段 3–4：核心功能")

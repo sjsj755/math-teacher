@@ -1,0 +1,16 @@
+{
+  "content_version": 1,
+  "files": {
+    "chapters": "assets/data/chapters.json",
+    "questions": "assets/data/questions.json"
+  },
+  "generated_at": "2026-08-08",
+  "stats": {
+    "books": 5,
+    "chapters": 18,
+    "sections": 24,
+    "questions": 77,
+    "content_questions": 73,
+    "self_eval_questions": 4
+  }
+}

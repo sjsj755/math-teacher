@@ -23,8 +23,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  sqflite_common_ffi: ^2.3.6
 
 flutter:
   uses-material-design: true
   assets:
     - assets/data/
+    - lib/core/db/migrations/
+
+# sqlite3（sqflite_common_ffi 的传递依赖，仅测试用）在构建时默认从 GitHub
+# 下载预编译库；此处改为使用系统 SQLite，避免构建依赖公网下载。
+hooks:
+  user_defines:
+    sqlite3:
+      source: system
