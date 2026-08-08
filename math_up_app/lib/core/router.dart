@@ -31,9 +31,9 @@ class AppRouter {
       case AppRoutes.onboarding:
         return _page(OnboardingPage(dbInitController: _dbInitController));
       case AppRoutes.diagnosis:
-        return _page(const DiagnosisPage());
+        return _page(DiagnosisPage(dbInitController: _dbInitController));
       case AppRoutes.report:
-        return _page(const ReportPage());
+        return _page(ReportPage(dbInitController: _dbInitController));
       case AppRoutes.practice:
         return _page(const PracticePage());
       case AppRoutes.errorbook:

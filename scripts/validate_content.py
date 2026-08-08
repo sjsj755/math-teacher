@@ -47,10 +47,29 @@ def main():
     index = load_json(DATA / "content_index.json")
     chapters = load_json(DATA / "chapters.json")
     questions = load_json(DATA / "questions.json")["questions"]
+    config = load_json(DATA / "config.json")
 
     content_version = index.get("content_version")
     if not isinstance(content_version, int) or content_version < 1:
         errors.append("content_index.json: content_version 必须为正整数")
+
+    # ---- 配置 ----
+    diagnosis = config.get("diagnosis") or {}
+    for key in ("total", "k", "t", "s", "p"):
+        if not isinstance(diagnosis.get(key), int) or diagnosis.get(key) <= 0:
+            errors.append(f"config.json: diagnosis.{key} 必须为正整数")
+    if diagnosis.get("total") != diagnosis.get("k") + diagnosis.get("t") + diagnosis.get("s") + diagnosis.get("p"):
+        errors.append("config.json: diagnosis.total 必须等于 k+t+s+p")
+    weak = diagnosis.get("weak_threshold")
+    if not isinstance(weak, (int, float)) or not 0 < weak < 1:
+        errors.append("config.json: diagnosis.weak_threshold 必须在 (0,1) 内")
+    timing = config.get("timing") or {}
+    for key in ("choice", "fill", "essay"):
+        if not isinstance(timing.get(key), int) or timing.get(key) <= 0:
+            errors.append(f"config.json: timing.{key} 必须为正整数")
+    practice = config.get("practice") or {}
+    if not isinstance(practice.get("size"), int) or practice.get("size") <= 0:
+        errors.append("config.json: practice.size 必须为正整数")
 
     # ---- 章节树 ----
     books = chapters.get("books")
@@ -124,6 +143,12 @@ def main():
         if lose not in LOSE_TYPES:
             errors.append(f"{qid}: lose_type 非法：{lose}")
 
+        is_timed = q.get("is_timed", False)
+        if not isinstance(is_timed, bool):
+            errors.append(f"{qid}: is_timed 必须为布尔值")
+        if is_timed and qtype != "choice":
+            errors.append(f"{qid}: 限时题（is_timed）仅允许选择题")
+
         method = q.get("thinking_method")
         if method is not None and method not in THINKING_METHODS:
             errors.append(f"{qid}: thinking_method 非法：{method}")
@@ -173,6 +198,10 @@ def main():
     for chapter in sorted(CONTENT_CHAPTERS):
         if per_chapter_d4[chapter] < 1:
             errors.append(f"章节 {chapter} 缺少难度 4-5 的压轴题")
+
+    timed_pool = [q for q in questions if q.get("is_timed") is True]
+    if not timed_pool:
+        errors.append("questions.json: 限时题池为空，至少需要 1 道 is_timed 选择题")
 
     # ---- 统计输出 ----
     content_total = sum(content_difficulty_count.values())

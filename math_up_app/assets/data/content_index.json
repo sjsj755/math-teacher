@@ -1,5 +1,5 @@
 {
-  "content_version": 1,
+  "content_version": 2,
   "files": {
     "chapters": "assets/data/chapters.json",
     "questions": "assets/data/questions.json"

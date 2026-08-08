@@ -52,6 +52,7 @@ class Question {
     required this.stem,
     required this.answer,
     required this.variantGroup,
+    this.isTimed = false,
     this.thinkingMethod,
     this.options = const [],
     this.explain,
@@ -67,6 +68,7 @@ class Question {
   final String stem;
   final String answer;
   final String variantGroup;
+  final bool isTimed;
   final String? thinkingMethod;
   final List<String> options;
   final String? explain;
@@ -83,6 +85,7 @@ class Question {
       stem: json['stem'] as String,
       answer: (json['answer'] as String?) ?? '',
       variantGroup: json['variant_group'] as String,
+      isTimed: json['is_timed'] as bool? ?? false,
       thinkingMethod: json['thinking_method'] as String?,
       options: (json['options'] as List<dynamic>? ?? const [])
           .map((item) => item as String)
@@ -105,6 +108,7 @@ class Question {
       stem: map['stem'] as String,
       answer: map['answer'] as String,
       variantGroup: map['variant_group'] as String,
+      isTimed: (map['is_timed'] as int?) == 1,
       thinkingMethod: map['thinking_method'] as String?,
       options: _decodeStringList(map['options'] as String?),
       explain: map['explain'] as String?,
@@ -126,6 +130,7 @@ class Question {
       'answer': answer,
       'explain': explain,
       'variant_group': variantGroup,
+      'is_timed': isTimed ? 1 : 0,
       'tags': jsonEncode(tags),
     };
   }

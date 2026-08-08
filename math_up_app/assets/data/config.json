@@ -1,0 +1,21 @@
+{
+  "diagnosis": {
+    "total": 15,
+    "k": 6,
+    "t": 5,
+    "s": 2,
+    "p": 2,
+    "weak_threshold": 0.6
+  },
+  "timing": {
+    "choice": 120,
+    "fill": 180,
+    "essay": 600
+  },
+  "practice": {
+    "size": 10,
+    "easy": 0.6,
+    "medium": 0.3,
+    "hard": 0.1
+  }
+}

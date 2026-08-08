@@ -1,5 +1,18 @@
 # 更新日志
 
+## v0.4.0（2026-08-08）
+
+### 新增
+- 阶段 3 诊断与报告：15 题诊断（K6/T5/S2/P2，含填空与限时题）→ 四因子评分 → 完成弹层 → 报告页雷达图。
+- DiagnosticEngine 规则引擎（choice/fill 判分、自评映射、超时计错、薄弱点与归因）、DiagnosisAssembler（含高二/高三降级补题）、DiagnosisService（作答落库与最近诊断读取）。
+- LatexText 行内公式渲染、迁移 002（is_timed/self_option/attribution，schema_version 2）、config.json（诊断/限时/练习配置）、题库限时题池与 content_version 2。
+
+### 修复
+- 无。
+
+### 内容变更
+- content 2：4 道难度 4 选择题标记为限时题（is_timed）。
+
 ## v0.3.0（2026-08-08）
 
 ### 新增

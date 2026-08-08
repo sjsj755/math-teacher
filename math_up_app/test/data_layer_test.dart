@@ -61,13 +61,13 @@ void main() {
     );
   }
 
-  test('迁移：user_version 为 1 且写入默认配置', () async {
-    expect(await db.getVersion(), 1);
+  test('迁移：user_version 为 2 且写入默认配置', () async {
+    expect(await db.getVersion(), 2);
     final rows = await db.query('app_config');
     final config = {
       for (final row in rows) row['key'] as String: row['value'] as String,
     };
-    expect(config['schema_version'], '1');
+    expect(config['schema_version'], '2');
     expect(config['content_version'], '0');
     expect(config['push_time'], '21:30');
     expect(config['daily_enabled'], 'true');
@@ -79,7 +79,7 @@ void main() {
     expect(result.imported, isTrue);
     expect(result.questionCount, expectedCount);
     expect(result.contentVersion, contentIndexJson['content_version']);
-    expect(result.schemaVersion, 1);
+    expect(result.schemaVersion, 2);
 
     final count = await db.rawQuery('SELECT COUNT(*) AS c FROM question');
     expect(count.first['c'], expectedCount);
